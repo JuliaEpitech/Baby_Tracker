@@ -6,16 +6,30 @@
     #comportement 4: note heure de début + lance un timer
 #**Génère un qr code pour pouvoir visualiser les overviews?
 #**prévois une overview croisée des différentes activités 
+#(ajoute option switch baby pour pouvoir changer de bébé sans interrompre le programme)
 
-#où placer la création de liste pour sauvegarder chacune des entrées sauvegardées selon l'identité du bébé? >>DB
+#tests unitaires
+#classes
+#API (the Bump)
+#serveur (scaling?)
 #librairies externes (date du jour)
-#ma propre base de données
 
-baby_name = input("What's the name of your baby? \U0001F476\n")
+
+
+#rajoute une option dans le menu "oh nooooon! >> mais c'est pour ça qu'il faut toujours préparer du modulable!"
+#pour charger mon fichier dans mes tableaux (sans duplicata, afin que le programme puisse se souvenir des précédents logs même s'il a été arrêté)
+# > faire appel au contenu du fichier au lancement du programme mais après baby_name de manière à pas surchager la RAM avec des infos inutiles
+
+
+
 
 #tous les imports sont précisés au début du code
 import Track_actions
+import model_DB
 from pathlib import Path
+
+baby_name = input("What's the name of your baby? \U0001F476\n")
+
 
 #emojis
 feed_emo = "\U0001F37C"
@@ -34,8 +48,29 @@ sleep_logs = []
 poop_logs =  []
 cry_logs = []
 
-activity_type = []        
 
+def load_feed():
+    if line[column_name.index("Activity")] == "feed":
+        new_feed_log = {"feed time" : line[column_name.index("StartingTime")], "feed duration" : line[column_name.index("Duration")]}
+        feed_logs.append(new_feed_log) #.write si ajouter dans un fichier externe, .append si ajouter dans la liste du programme
+
+def load_sleep():
+    if line[column_name.index("Activity")] == "sleep":
+        new_sleep_log = {"sleep time" : line[column_name.index("StartingTime")], "sleep duration" : line[column_name.index("Duration")]}
+        sleep_logs.append(new_sleep_log)
+
+def load_poop():
+    if line[column_name.index("Activity")] == "poop":
+        new_poop_log = {"poop time" : line[column_name.index("StartingTime")]}
+        poop_logs.append(new_poop_log)
+
+def load_cry():
+    if line[column_name.index("Activity")] == "cry":
+        new_cry_log = {"cry time" : line[column_name.index("StartingTime")], "cry duration" : line[column_name.index("Duration")]}
+        cry_logs.append(new_cry_log)
+
+
+#Baby Tracker Programme
 #main menu
 while True:
 
@@ -43,7 +78,8 @@ while True:
         "What would you like to do? \n"
         "\U0001F4DD Log an activity (feed, sleep, poop, cry): 1 \n"
         "\U0001F4CA View an activity overview: 2 \n"
-        "\U0001F6AA Exit: 3\n"
+        "\U0001F4E5 Load from Database: 3 \n"
+        "\U0001F6AA Exit: 4\n"
         ).strip().lower()
 
     #option 1: Activities tracker
@@ -69,25 +105,29 @@ while True:
                 if activity in ["1", "feed"]:
                     #activity_type.append(activity)
                     new_feed_log = Track_actions.feed_actions(baby_name)
-                    feed_logs.append(new_feed_log)
+                    if new_feed_log != -1:
+                        feed_logs.append(new_feed_log) #check if new log != none or -1 then >> add it
 
 
                 #SLEEP     
                 elif activity in ["2", "sleep"]:                
                     new_sleep_log = Track_actions.sleep_actions(baby_name)
-                    sleep_logs.append(new_sleep_log)
+                    if new_sleep_log != -1:
+                        sleep_logs.append(new_sleep_log)
 
 
                 #POOP
                 elif activity in ["3", "poop"]:
                     new_poop_log = Track_actions.poop_actions(baby_name)
-                    poop_logs.append(new_poop_log)
+                    if new_poop_log != -1:
+                        poop_logs.append(new_poop_log)
 
 
                 #CRY
                 elif activity in ["4", "cry"]:
                     new_cry_log = Track_actions.cry_actions(baby_name)
-                    cry_logs.append(new_cry_log)
+                    if new_cry_log != -1:
+                        cry_logs.append(new_cry_log)
                         
             
                 #Back to main menu
@@ -151,27 +191,69 @@ while True:
             pass
 
 
-    # option 3: Exit
-    elif activity_choice in ["3", "exit"]:
+    # option 3: Load from Database
+    elif activity_choice in ["3", "load", "database"]:
+        print("\U0001F4E5 Your baby’s data is ready\n")
+
+        #call the data from the csv file:
+        path_Baby_trackerDB = Path.home() / "Documents" / "bosstek" / "Perso_projects" / "Baby_Tracker" / "Baby_tracker_db.csv"
+
+        with open(path_Baby_trackerDB, "r") as file: 
+
+            #iterate through the lines
+            lines = []
+            lines = file.read().replace(" ","").split("\n")
+            
+            #traite 1ère ligne pour que le programme utilise les noms entrés dans cette première ligne pour définir les colonnes des lignes suivantes
+            column_name = lines[0].split(",")
+
+            #boucle pour chaque ligne pour retrouver les colonnes
+            for line in lines[1:]:
+                line = line.split(",")
+
+                #print(line[column_name.index("Activity")]) >> check que le programme retrouve bien la colonne correspondante
+
+                if line[column_name.index("BabyName")] == baby_name: 
+                #pas de while parce que déjà for loop et le pgm doit prendre les infos directement, au fur et à mesure qu'il va de ligne en ligne, SI le Baby Name == nom du bébé donné par l'utilisateur
+
+                    load_feed()
+                    load_sleep()
+                    load_poop()
+                    load_cry()
+#check pour ne pas que les données soient importées et donc apparaissent une autre fois dans le csv
+
+        print(feed_logs, sleep_logs, poop_logs, cry_logs)    
+
+    
+    
+    
+    # option 4: Exit
+    elif activity_choice in ["4", "exit"]:
         
+        #store the data in an external csv file:
+        path_Baby_trackerDB = Path.home() / "Documents" / "bosstek" / "Perso_projects" / "Baby_Tracker" / "Baby_tracker_db.csv"
         
-        path_Baby_trackerDB = Path.home() / "Documents" / "bosstek" / "Perso_projects" / "Baby_tracker.db"
-        
-        #with open(path_Baby_trackerDB, "r") as file:
-            #print(file.read())
+        with open(path_Baby_trackerDB, "r") as file:
+            print(file.read())
 
+        #store data ONLY if it's not there already!!
+        with open(path_Baby_trackerDB, "a") as file:
+            if feed_logs != "":
+                print(feed_logs)
+                for log in feed_logs:
+                    file.write(f"{ID}, on, {baby_name},feed,{log["feed time"]},{log["feed duration"]}\n")
 
-        #with open(path_Baby_trackerDB, "a") as file: 
-            #file.write(f"{baby_name}, {activity}, new, info\n")   #comme pour printf
+            if sleep_logs != "":
+                for log in sleep_logs:
+                    file.write(f"{baby_name},sleep,{log["sleep time"]},{log["sleep duration"]}\n")
 
-            #fichier .csv >> check d'abord la structure:
-            #ligne 1 == name, activity, logs/data specificities >> Nina, feed, starting time, duration
-            #formate données: élément 1 == nom bébé (==baby_name), élément 2 == activity (==activity), élément 3 == starting time (==feed_time or sleep-time or poop_time or cry_time), élément 4 == duration (==feed_duration or sleep_duration or poop_duration or cry_duration)
-            #"write" ajoute a la fin si ouvre en append, add line by line of the list, virgules entre les éléments
-            # dictionary's blabla_time + blabla_duration == 3rd +4th elements in the csv 
-            #
+            if poop_logs != "":
+                for log in poop_logs:
+                    file.write(f"{baby_name},poop,{log["poop time"]}\n")
 
-
+            if cry_logs != "":
+                for log in cry_logs:
+                    file.write(f"{baby_name},cry,{log["cry time"]},{log["cry duration"]}\n")    
 
 
         with open(path_Baby_trackerDB, "r") as file:
