@@ -20,8 +20,8 @@ with open(path_Baby_trackerDB, "r") as file:
         line = line.split(",")
         
         if len(line) != 0:
-            last_line = last_line + 1
-    print(len(lines))
+            ID = last_line + 1
+    
             
 print(last_line)
-        
+print(ID)

@@ -25,7 +25,7 @@
 
 #tous les imports sont précisés au début du code
 import Track_actions
-import model_DB
+#import model_DB
 from pathlib import Path
 
 baby_name = input("What's the name of your baby? \U0001F476\n")
@@ -203,6 +203,23 @@ while True:
             #iterate through the lines
             lines = []
             lines = file.read().replace(" ","").split("\n")
+
+            #boucle pour chaque ligne pour retrouver les colonnes
+            for line in lines[1:]:
+                line = line.split(",")
+
+                last_line = 1
+                
+            #count lines to define the last_line & ID
+                if len(line) != 0:
+                    ID = last_line + 1
+
+
+        with open(path_Baby_trackerDB, "r") as file: 
+
+            #iterate through the lines
+            lines = []
+            lines = file.read().replace(" ","").split("\n")
             
             #traite 1ère ligne pour que le programme utilise les noms entrés dans cette première ligne pour définir les colonnes des lignes suivantes
             column_name = lines[0].split(",")
@@ -211,8 +228,8 @@ while True:
             for line in lines[1:]:
                 line = line.split(",")
 
-                #print(line[column_name.index("Activity")]) >> check que le programme retrouve bien la colonne correspondante
 
+                #print(line[column_name.index("Activity")]) >> check que le programme retrouve bien la colonne correspondante
                 if line[column_name.index("BabyName")] == baby_name: 
                 #pas de while parce que déjà for loop et le pgm doit prendre les infos directement, au fur et à mesure qu'il va de ligne en ligne, SI le Baby Name == nom du bébé donné par l'utilisateur
 
@@ -238,30 +255,26 @@ while True:
 
         #store data ONLY if it's not there already!!
         with open(path_Baby_trackerDB, "a") as file:
-            if feed_logs != "":
-                print(feed_logs)
-                for log in feed_logs:
-                    file.write(f"{ID}, on, {baby_name},feed,{log["feed time"]},{log["feed duration"]}\n")
 
-            if sleep_logs != "":
-                for log in sleep_logs:
-                    file.write(f"{baby_name},sleep,{log["sleep time"]},{log["sleep duration"]}\n")
+            if ID > last_line:
 
-            if poop_logs != "":
-                for log in poop_logs:
-                    file.write(f"{baby_name},poop,{log["poop time"]}\n")
+                if feed_logs != "":
+                    print(feed_logs)
+                    for log in feed_logs:
+                        file.write(f"{ID}, on, {baby_name},feed,{log["feed time"]},{log["feed duration"]}\n")
 
-            if cry_logs != "":
-                for log in cry_logs:
-                    file.write(f"{baby_name},cry,{log["cry time"]},{log["cry duration"]}\n")    
+                if sleep_logs != "":
+                    for log in sleep_logs:
+                        file.write(f"{ID}, on, {baby_name},sleep,{log["sleep time"]},{log["sleep duration"]}\n")
 
+                if poop_logs != "":
+                    for log in poop_logs:
+                        file.write(f"{ID}, on, {baby_name},poop,{log["poop time"]}\n")
 
-        with open(path_Baby_trackerDB, "r") as file:
-            print(file.read())
-
-
-
-            pass
+                if cry_logs != "":
+                    for log in cry_logs:
+                        file.write(f"{ID}, on, {baby_name},cry,{log["cry time"]},{log["cry duration"]}\n")   
+ 
 
         print("Thanks for using the app! See you soon! \U0001F44B")
         quit()
