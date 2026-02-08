@@ -208,12 +208,11 @@ while True:
             for line in lines[1:]:
                 line = line.split(",")
 
-                last_line = 1
-                
+                last_line = 0
+
             #count lines to define the last_line & ID
                 if len(line) != 0:
                     ID = last_line + 1
-
 
         with open(path_Baby_trackerDB, "r") as file: 
 

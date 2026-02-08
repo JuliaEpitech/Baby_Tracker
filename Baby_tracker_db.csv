@@ -1,10 +1,10 @@
 ID,State, BabyName,Activity,StartingTime,Duration
-2, on, Nina, feed, 10:00, 10
-3, on, Nina, feed, 13:00, 13
-4, off, Nina, sleep, 09:00, 60
-5, on, Nina, sleep, 15:00, 90
-6, on, Nina, poop, 13:45
-7, on, Nina, cry, 16:00, 45
-8, on, Nina, cry, 18:00, 49
-9, on, Polo, poop, 22:00
-10, on, Polo, feed, 18:00, 20
+1, on, Nina, feed, 10:00, 10
+2, on, Nina, feed, 13:00, 13
+3, off, Nina, sleep, 09:00, 60
+4, on, Nina, sleep, 15:00, 90
+5, on, Nina, poop, 13:45
+6, on, Nina, cry, 16:00, 45
+7, on, Nina, cry, 18:00, 49
+8, on, Polo, poop, 22:00
+9, on, Polo, feed, 18:00, 20
