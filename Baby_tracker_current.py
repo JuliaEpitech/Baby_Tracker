@@ -21,7 +21,7 @@
 # > faire appel au contenu du fichier au lancement du programme mais après baby_name de manière à pas surchager la RAM avec des infos inutiles
 
 
-
+#next TODO: check dans option 3 pour ne pas réécrire dans le csv les données déjà présentes + attribution ID >> pb de loop/identations??
 
 #tous les imports sont précisés au début du code
 import Track_actions
