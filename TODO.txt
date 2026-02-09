@@ -1,0 +1,26 @@
+TODO:
+
+#expected outputs: 1/ current/last entry tracking; 2/ history (horaires? stats?); 3/ graphs (with times, number of feeds p.day); 4/ AI personalized schedule maker
+#évolution possible:
+    #comportement 1: note heure de début + lance un timer
+    #comportement 2: note heure de début + lance un timer
+    #comportement 3: note heure (+type de poop?+ pipi? + vomi?)
+    #comportement 4: note heure de début + lance un timer
+#**Génère un qr code pour pouvoir visualiser les overviews?
+#**prévois une overview croisée des différentes activités 
+#(ajoute option switch baby pour pouvoir changer de bébé sans interrompre le programme)
+
+#tests unitaires
+#classes
+#API (the Bump)
+#serveur (scaling?)
+#librairies externes (date du jour)
+
+
+
+#rajoute une option dans le menu "oh nooooon! >> mais c'est pour ça qu'il faut toujours préparer du modulable!"
+#pour charger mon fichier dans mes tableaux (sans duplicata, afin que le programme puisse se souvenir des précédents logs même s'il a été arrêté)
+# > faire appel au contenu du fichier au lancement du programme mais après baby_name de manière à pas surchager la RAM avec des infos inutiles
+
+
+#next TODO: check dans option 3 pour ne pas réécrire dans le csv les données déjà présentes + attribution ID >> pb de loop/identations??

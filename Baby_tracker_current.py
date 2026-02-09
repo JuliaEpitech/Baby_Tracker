@@ -1,33 +1,9 @@
-#expected outputs: 1/ current/last entry tracking; 2/ history (horaires? stats?); 3/ graphs (with times, number of feeds p.day); 4/ AI personalized schedule maker
-#évolution possible:
-    #comportement 1: note heure de début + lance un timer
-    #comportement 2: note heure de début + lance un timer
-    #comportement 3: note heure (+type de poop?+ pipi? + vomi?)
-    #comportement 4: note heure de début + lance un timer
-#**Génère un qr code pour pouvoir visualiser les overviews?
-#**prévois une overview croisée des différentes activités 
-#(ajoute option switch baby pour pouvoir changer de bébé sans interrompre le programme)
-
-#tests unitaires
-#classes
-#API (the Bump)
-#serveur (scaling?)
-#librairies externes (date du jour)
-
-
-
-#rajoute une option dans le menu "oh nooooon! >> mais c'est pour ça qu'il faut toujours préparer du modulable!"
-#pour charger mon fichier dans mes tableaux (sans duplicata, afin que le programme puisse se souvenir des précédents logs même s'il a été arrêté)
-# > faire appel au contenu du fichier au lancement du programme mais après baby_name de manière à pas surchager la RAM avec des infos inutiles
-
-
-#next TODO: check dans option 3 pour ne pas réécrire dans le csv les données déjà présentes + attribution ID >> pb de loop/identations??
-
 #tous les imports sont précisés au début du code
 import Track_actions
 #import model_DB
 from pathlib import Path
 
+#ask user for baby's name
 baby_name = input("What's the name of your baby? \U0001F476\n")
 
 
@@ -37,7 +13,7 @@ sleep_emo = "\U0001F634"
 poop_emo = "\U0001F4A9"
 cry_emo = "\U0001F4AA"
 
-#
+#variables and dictionaries for each activity
 feed = "feed"
 sleep = "sleep"
 poop = "poop"
@@ -48,7 +24,7 @@ sleep_logs = []
 poop_logs =  []
 cry_logs = []
 
-
+#data load functions for each activity
 def load_feed():
     if line[column_name.index("Activity")] == "feed":
         new_feed_log = {"feed time" : line[column_name.index("StartingTime")], "feed duration" : line[column_name.index("Duration")]}
@@ -70,8 +46,7 @@ def load_cry():
         cry_logs.append(new_cry_log)
 
 
-#Baby Tracker Programme
-#main menu
+#Baby Tracker Programme - main menu
 while True:
 
     activity_choice = input(
@@ -195,7 +170,7 @@ while True:
     elif activity_choice in ["3", "load", "database"]:
         print("\U0001F4E5 Your baby’s data is ready\n")
 
-        #call the data from the csv file:
+        #call data from csv file:
         path_Baby_trackerDB = Path.home() / "Documents" / "bosstek" / "Perso_projects" / "Baby_Tracker" / "Baby_tracker_db.csv"
 
         with open(path_Baby_trackerDB, "r") as file: 
@@ -204,7 +179,7 @@ while True:
             lines = []
             lines = file.read().replace(" ","").split("\n")
 
-            #boucle pour chaque ligne pour retrouver les colonnes
+            #find the columns while looping through each line
             for line in lines[1:]:
                 line = line.split(",")
 
@@ -220,15 +195,15 @@ while True:
             lines = []
             lines = file.read().replace(" ","").split("\n")
             
-            #traite 1ère ligne pour que le programme utilise les noms entrés dans cette première ligne pour définir les colonnes des lignes suivantes
+            #process first line to help define the columns names in the following lines
             column_name = lines[0].split(",")
 
-            #boucle pour chaque ligne pour retrouver les colonnes
+            #loop through each row to find columns
             for line in lines[1:]:
                 line = line.split(",")
 
 
-                #print(line[column_name.index("Activity")]) >> check que le programme retrouve bien la colonne correspondante
+                #print(line[column_name.index("Activity")]) >> check that the right column is found
                 if line[column_name.index("BabyName")] == baby_name: 
                 #pas de while parce que déjà for loop et le pgm doit prendre les infos directement, au fur et à mesure qu'il va de ligne en ligne, SI le Baby Name == nom du bébé donné par l'utilisateur
 
@@ -236,7 +211,7 @@ while True:
                     load_sleep()
                     load_poop()
                     load_cry()
-#check pour ne pas que les données soient importées et donc apparaissent une autre fois dans le csv
+#check to prevent data from being imported and therefore appearing again in the CSV file
 
         print(feed_logs, sleep_logs, poop_logs, cry_logs)    
 
